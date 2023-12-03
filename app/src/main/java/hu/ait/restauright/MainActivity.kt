@@ -10,8 +10,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
+import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
+import java.security.AccessController
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    RestaurightNavHost()
                 }
             }
         }
@@ -30,17 +38,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun RestaurightNavHost(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = "display_restaurants"
+) {
+    NavHost(
+        modifier = modifier, navController = navController, startDestination = startDestination
+    ) {
+        composable("display_restaurants") { DisplayRestaurantsScreen(
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RestaurightTheme {
-        Greeting("Android")
+        ) }
     }
 }
