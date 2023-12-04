@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
+import hu.ait.restauright.screen.HomeScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
 import java.security.AccessController
 
@@ -41,13 +42,21 @@ class MainActivity : ComponentActivity() {
 fun RestaurightNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "display_restaurants"
+    startDestination: String = "home_screen"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
-        composable("display_restaurants") { DisplayRestaurantsScreen(
 
+        composable("home_screen") {
+           HomeScreen(
+               onNavigateToRestaurants = {->
+                   navController.navigate("display_restaurants")
+               }
+           )
+        }
+
+        composable("display_restaurants") { DisplayRestaurantsScreen(
         ) }
     }
 }

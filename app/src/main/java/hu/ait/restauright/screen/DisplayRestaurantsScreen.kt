@@ -1,6 +1,9 @@
 package hu.ait.restauright.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,6 +11,8 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -24,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +87,7 @@ fun ResultScreen(
                 modifier = Modifier.padding(10.dp)
             ) {
                 items(restaurants!!) {
-                    restaurantCard(restaurant = it, userModel = userModel)
+                    restaurantCard(restaurant = it, userModel = userModel, numVotes)
                 }
             }
         }
@@ -91,12 +97,33 @@ fun ResultScreen(
 @Composable
 fun restaurantCard(
     restaurant: Businesse,
-    userModel: UserModel) {
-    Column {
-        ClickableText(
-            text = AnnotatedString("${restaurant.name}"),
-            onClick = {
-                userModel.useAVote()
-            })
+    userModel: UserModel,
+    numVotes: Int) {
+    var isClicked by rememberSaveable {
+        mutableStateOf(false)
     }
+    Column(
+        modifier = Modifier
+            .background(if (isClicked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background)
+    ) {
+        Card( modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .clickable() {
+                                if (!isClicked && numVotes > 0) {
+                                    userModel.voteForRestaurant(restaurant.name)
+                                    isClicked = !isClicked
+                                }
+                                else if (isClicked) {
+                                    userModel.removeRestaurantVote(restaurant.name)
+                                    isClicked = !isClicked
+                                }
+                            }
+        ) {
+            Text(
+                text = AnnotatedString("${restaurant.name}"),
+                modifier = Modifier.padding(10.dp).fillMaxWidth())
+        }
+    }
+
 }
