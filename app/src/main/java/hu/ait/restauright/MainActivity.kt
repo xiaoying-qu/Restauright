@@ -6,10 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,8 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.HomeScreen
+import hu.ait.restauright.screen.ResultsScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
-import java.security.AccessController
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,7 +54,14 @@ fun RestaurightNavHost(
            )
         }
 
-        composable("display_restaurants") { DisplayRestaurantsScreen(
-        ) }
+        composable("display_restaurants") {
+            DisplayRestaurantsScreen(
+                onNavigateToResults = {->
+                    navController.navigate("results")
+                }
+            )
+        }
+
+        composable("results") { ResultsScreen() }
     }
 }

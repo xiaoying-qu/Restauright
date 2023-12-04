@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -40,7 +38,8 @@ import hu.ait.restauright.Data.RestaurantResult
 @Composable
 fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
-    restaurantsViewModel: RestaurantsViewModel = hiltViewModel()
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
+    onNavigateToResults: () -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
         restaurantsViewModel.getRestaurants()
@@ -50,7 +49,7 @@ fun DisplayRestaurantsScreen (
         when (restaurantsViewModel.restaurantUiState) {
             is RestaurantUiState.Init -> {}
             is RestaurantUiState.Loading -> CircularProgressIndicator()
-            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant)
+            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults)
             is RestaurantUiState.Error -> Text(text = "Error: ${(restaurantsViewModel.restaurantUiState as RestaurantUiState.Error).errorMsg}")
         }
     }
@@ -60,7 +59,8 @@ fun DisplayRestaurantsScreen (
 @Composable
 fun ResultScreen(
     restaurant: RestaurantResult,
-    userModel: UserModel = hiltViewModel()
+    userModel: UserModel = hiltViewModel(),
+    onNavigateToResults: () -> Unit
 ) {
     val restaurants by rememberSaveable {
         mutableStateOf(restaurant.businesses)
@@ -74,7 +74,9 @@ fun ResultScreen(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
             ),
             actions = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    onNavigateToResults()
+                }) {
                     Icon(Icons.Filled.CheckCircle, null)
                 }
             }
