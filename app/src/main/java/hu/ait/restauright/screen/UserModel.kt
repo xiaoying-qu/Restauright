@@ -20,13 +20,20 @@ class UserModel @Inject constructor(
     private val _numVotesRemaining = MutableStateFlow(5)
     val numVotesRemaining = _numVotesRemaining.asStateFlow()
 
+    val votes: MutableList<String?> = mutableListOf()
+
     fun getNumVotes(): Flow<Int> {
         return numVotesRemaining
     }
 
-    fun useAVote() {
-        if (_numVotesRemaining.value > 0) {
-            _numVotesRemaining.value -= 1
-        }
+    fun voteForRestaurant(restaurantName: String?) {
+        _numVotesRemaining.value -= 1
+        votes.add(restaurantName)
     }
+
+    fun removeRestaurantVote(restaurantName: String?) {
+        _numVotesRemaining.value += 1
+        votes.remove(restaurantName)
+    }
+
 }
