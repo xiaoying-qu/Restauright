@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.HomeScreen
 import hu.ait.restauright.screen.ResultsScreen
+import hu.ait.restauright.screen.SignInScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
 
 @AndroidEntryPoint
@@ -40,11 +41,20 @@ class MainActivity : ComponentActivity() {
 fun RestaurightNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "home_screen"
+    startDestination: String = "sign_in"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
+
+        composable("sign_in") {
+            SignInScreen(
+                onNavigateToHomeScreen = { ->
+                    navController.navigate("home_screen")
+                }
+            )
+        }
+
 
         composable("home_screen") {
            HomeScreen(

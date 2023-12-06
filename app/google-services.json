@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "533734909395",
+    "project_id": "restauright-77e0a",
+    "storage_bucket": "restauright-77e0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533734909395:android:58a8c742d3dc66e60abb26",
+        "android_client_info": {
+          "package_name": "hu.ait.restauright"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn-UEPxXkDap7hQlz6Q6IBHTN0YWZ5QAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
