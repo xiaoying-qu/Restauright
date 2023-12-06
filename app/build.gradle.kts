@@ -8,6 +8,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    id("com.google.gms.google-services")
 }
 
 val localProps: Properties = Properties()
@@ -111,6 +112,11 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    implementation("com.google.firebase:firebase-auth:22.2.0")
+    implementation("com.google.firebase:firebase-firestore:24.9.1")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation(platform("com.google.firebase:firebase-bom:31.5.0"))
 }
 
 // Allow references to generated code
