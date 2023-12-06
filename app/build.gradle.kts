@@ -71,6 +71,10 @@ android {
 }
 
 dependencies {
+    // added two dependencies for swiping on top
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation ("io.coil-kt:coil-compose:2.2.2")
+    implementation ("androidx.compose.material:material:1.5.4")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

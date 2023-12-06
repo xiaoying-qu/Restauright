@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.CheckCircle
@@ -34,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hu.ait.restauright.Data.Businesse
 import hu.ait.restauright.Data.RestaurantResult
+import hu.ait.restauright.components.CardStack
 
 @Composable
 fun DisplayRestaurantsScreen (
@@ -55,7 +57,7 @@ fun DisplayRestaurantsScreen (
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ResultScreen(
     restaurant: RestaurantResult,
@@ -85,13 +87,16 @@ fun ResultScreen(
             Text(text = "No restaurants found")
         }
         else {
-            LazyColumn(
+            CardStack(items = restaurants!!)
+
+            /*LazyColumn(
                 modifier = Modifier.padding(10.dp)
             ) {
                 items(restaurants!!) {
                     restaurantCard(restaurant = it, userModel = userModel, numVotes)
                 }
             }
+             */
         }
     }
 }
@@ -109,22 +114,23 @@ fun restaurantCard(
             .background(if (isClicked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background)
     ) {
         Card( modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                            .clickable() {
-                                if (!isClicked && numVotes > 0) {
-                                    userModel.voteForRestaurant(restaurant.name)
-                                    isClicked = !isClicked
-                                }
-                                else if (isClicked) {
-                                    userModel.removeRestaurantVote(restaurant.name)
-                                    isClicked = !isClicked
-                                }
-                            }
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable() {
+                if (!isClicked && numVotes > 0) {
+                    userModel.voteForRestaurant(restaurant.name)
+                    isClicked = !isClicked
+                } else if (isClicked) {
+                    userModel.removeRestaurantVote(restaurant.name)
+                    isClicked = !isClicked
+                }
+            }
         ) {
             Text(
                 text = AnnotatedString("${restaurant.name}"),
-                modifier = Modifier.padding(10.dp).fillMaxWidth())
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth())
         }
     }
 
