@@ -30,23 +30,48 @@ class HomeScreenViewModel : ViewModel() {
         database = FirebaseDatabase.getInstance().getReference("sessions")
     }
 
+    private fun createNewSession(code: String, id: String, callback: (Session?) -> Unit) {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (childSnapshot in dataSnapshot.children) {
+                    val session = childSnapshot.getValue(Session::class.java)
+                    val sessionCode = session?.code
+
+                    if (sessionCode != null && sessionCode == code) {
+                        val newCode = (100000..999999).random().toString()
+                         createNewSession(newCode, id, callback)
+                    }
+                }
+
+                val session = Session(id, code)
+                callback(session)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
     fun createSession() {
         homeUiState = HomeUiState.Loading
 
         try {
             val id = database.push().key!!
-            val code = database.push().key!!
-            val session = Session(
-                id, code
-            )
-            database.child(id).setValue(session)
-                .addOnCompleteListener {
-                    homeUiState = HomeUiState.RegisterSuccess
-                }
-                .addOnFailureListener {
-                    homeUiState = HomeUiState.Error(it.message)
-                }
+            val code = (100000..999999).random().toString()
+            createNewSession(code, id) { result ->
+                database.child(id).setValue(result)
+                    .addOnCompleteListener {
+                        homeUiState = HomeUiState.RegisterSuccess
+                    }
+                    .addOnFailureListener {
+                        homeUiState = HomeUiState.Error(it.message)
+                    }
+            }
+
+
         } catch (e: Exception) {
+            Log.d("createSession", "createSession: Error $e")
             homeUiState = HomeUiState.Error(e.message)
         }
     }
@@ -60,7 +85,6 @@ class HomeScreenViewModel : ViewModel() {
                     for (childSnapshot in dataSnapshot.children) {
                         val session = childSnapshot.getValue(Session::class.java)
                         val sessionCode = session?.code
-                        Log.d("Session", "Session: $session, Code: $sessionCode")
 
                         if (sessionCode != null && sessionCode == code) {
                             // Call the callback with the result

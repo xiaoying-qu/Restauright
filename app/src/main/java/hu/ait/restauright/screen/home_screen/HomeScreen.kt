@@ -57,7 +57,7 @@ fun HomeScreen (
         )
         Button(onClick = {
             coroutineScope.launch {
-                homeScreenViewModel.joinSession('-' + userText) { result ->
+                homeScreenViewModel.joinSession(userText) { result ->
                     if (result != "Code does not exist") {
                         onNavigateToRestaurants()
                     }
