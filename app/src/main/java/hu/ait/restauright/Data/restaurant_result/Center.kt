@@ -1,4 +1,4 @@
-package hu.ait.restauright.Data
+package hu.ait.restauright.Data.restaurant_result
 
 
 import kotlinx.serialization.SerialName

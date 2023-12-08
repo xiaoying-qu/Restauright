@@ -1,6 +1,6 @@
 package hu.ait.restauright.network
 
-import hu.ait.restauright.Data.RestaurantResult
+import hu.ait.restauright.Data.restaurant_result.RestaurantResult
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query

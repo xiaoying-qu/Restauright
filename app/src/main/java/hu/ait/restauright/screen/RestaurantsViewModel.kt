@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.BuildConfig
-import hu.ait.restauright.Data.RestaurantResult
+import hu.ait.restauright.Data.restaurant_result.RestaurantResult
 import hu.ait.restauright.network.RestaurantAPI
 import kotlinx.coroutines.launch
 import javax.inject.Inject
