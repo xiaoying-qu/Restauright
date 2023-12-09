@@ -1,39 +1,34 @@
-    package hu.ait.restauright.screen.login
+package hu.ait.restauright.screen.login
 
-    import android.location.Location
-    import android.util.Log
-    import androidx.compose.runtime.getValue
-    import androidx.compose.runtime.mutableStateListOf
-    import androidx.compose.runtime.mutableStateOf
-    import androidx.compose.runtime.setValue
-    import androidx.lifecycle.ViewModel
-    import androidx.lifecycle.viewModelScope
-    import com.google.firebase.auth.AuthResult
-    import com.google.firebase.auth.FirebaseAuth
-    import com.google.firebase.auth.ktx.auth
-    import com.google.firebase.database.DataSnapshot
-    import com.google.firebase.database.DatabaseError
-    import com.google.firebase.database.DatabaseReference
-    import com.google.firebase.database.FirebaseDatabase
-    import com.google.firebase.database.ValueEventListener
-    import com.google.firebase.ktx.Firebase
-    import com.google.type.LatLng
-    import dagger.hilt.android.lifecycle.HiltViewModel
-    import hu.ait.restauright.Data.Session
-    import hu.ait.restauright.location.LocationManager
-    import kotlinx.coroutines.launch
-    import kotlinx.coroutines.tasks.await
-    import javax.inject.Inject
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import hu.ait.restauright.Data.Session
+import kotlinx.coroutines.tasks.await
 
-    class HomeScreenViewModel() : ViewModel(){
-        var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Init)
-        private lateinit var auth: FirebaseAuth
-        private lateinit var database: DatabaseReference
 
-        init {
-            auth = Firebase.auth
-            database = FirebaseDatabase.getInstance().getReference("sessions")
-        }
+class HomeScreenViewModel : ViewModel() {
+
+    var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Init)
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
+
+    init {
+        auth = Firebase.auth
+        database = FirebaseDatabase.getInstance().getReference("sessions")
+    }
 
         // Ensures session codes are unique: If the code is already in the database, will randomly generate a new one and try again
         fun createNewSession(

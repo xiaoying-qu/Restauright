@@ -1,5 +1,6 @@
 package hu.ait.restauright.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -37,11 +38,12 @@ fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
     onNavigateToResults: () -> Unit,
-    zipCode: String,
+    location: String,
     sessionCode: String
 ) {
+    Log.d("DEBUG", "DisplayRestaurantsScreen: $sessionCode")
     LaunchedEffect(key1 = Unit) {
-        restaurantsViewModel.getRestaurants()
+        restaurantsViewModel.getRestaurants(location)
     }
 
     Column {

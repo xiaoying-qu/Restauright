@@ -25,11 +25,11 @@ class RestaurantsViewModel @Inject constructor(
     val restaurantAPI: RestaurantAPI
 ) : ViewModel() {
     var restaurantUiState: RestaurantUiState by mutableStateOf(RestaurantUiState.Init)
-    fun getRestaurants() {
+    fun getRestaurants(location: String) {
         restaurantUiState = RestaurantUiState.Loading
         viewModelScope.launch {
             restaurantUiState = try {
-                val result = restaurantAPI.getRestaurants(BuildConfig.RESTAURANT_LOCATION, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
+                val result = restaurantAPI.getRestaurants(location, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
                 Log.d("DEBUG", "getWeather result: $result")
                 RestaurantUiState.Success(result)
             }
@@ -38,6 +38,5 @@ class RestaurantsViewModel @Inject constructor(
                 RestaurantUiState.Error(e.message!!)
             }
         }
-
     }
 }
