@@ -36,6 +36,7 @@ import hu.ait.restauright.components.CardStack
 @Composable
 fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
+
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
     onNavigateToResults: () -> Unit,
     location: String,
