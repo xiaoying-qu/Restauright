@@ -38,12 +38,12 @@ fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
     onNavigateToResults: () -> Unit,
-    zipCode: String,
+    location: String,
     sessionCode: String
 ) {
     Log.d("DEBUG", "DisplayRestaurantsScreen: $sessionCode")
     LaunchedEffect(key1 = Unit) {
-        restaurantsViewModel.getRestaurants()
+        restaurantsViewModel.getRestaurants(location)
     }
 
     Column {
