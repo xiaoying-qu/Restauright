@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
-import hu.ait.restauright.Data.Businesse
+import hu.ait.restauright.Data.restaurant_result.Businesse
 import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

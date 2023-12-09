@@ -9,12 +9,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
-import hu.ait.restauright.screen.HomeScreen
+import hu.ait.restauright.screen.home_screen.HomeScreen
 import hu.ait.restauright.screen.ResultsScreen
 import hu.ait.restauright.screen.SignInScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
@@ -58,18 +60,27 @@ fun RestaurightNavHost(
 
         composable("home_screen") {
            HomeScreen(
-               onNavigateToRestaurants = {->
-                   navController.navigate("display_restaurants")
+               onNavigateToRestaurants = {zipCode, sessionCode ->
+                   navController.navigate("display_restaurants/$zipCode/$sessionCode")
                }
            )
         }
 
-        composable("display_restaurants") {
-            DisplayRestaurantsScreen(
-                onNavigateToResults = {->
-                    navController.navigate("results")
-                }
-            )
+        composable("display_restaurants/{zipCode}/{sessionCode}",
+            arguments = listOf(
+                navArgument("zipCode"){type = NavType.StringType},
+            )) {
+            val zipCode = it.arguments?.getString("zipCode")
+            val sessionCode = it.arguments?.getString("sessionCode")
+            if (zipCode != null && sessionCode != null) {
+                DisplayRestaurantsScreen(
+                    onNavigateToResults = { ->
+                        navController.navigate("results")
+                    },
+                    zipCode = zipCode,
+                    sessionCode = sessionCode
+                )
+            }
         }
 
         composable("results") { ResultsScreen() }
