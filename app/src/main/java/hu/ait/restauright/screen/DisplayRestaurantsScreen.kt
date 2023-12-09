@@ -36,7 +36,9 @@ import hu.ait.restauright.components.CardStack
 fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit
+    onNavigateToResults: () -> Unit,
+    zipCode: String,
+    sessionCode: String
 ) {
     LaunchedEffect(key1 = Unit) {
         restaurantsViewModel.getRestaurants()
@@ -46,7 +48,7 @@ fun DisplayRestaurantsScreen (
         when (restaurantsViewModel.restaurantUiState) {
             is RestaurantUiState.Init -> {}
             is RestaurantUiState.Loading -> CircularProgressIndicator()
-            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults)
+            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults, sessionCode = sessionCode)
             is RestaurantUiState.Error -> Text(text = "Error: ${(restaurantsViewModel.restaurantUiState as RestaurantUiState.Error).errorMsg}")
         }
     }
@@ -57,7 +59,8 @@ fun DisplayRestaurantsScreen (
 fun ResultScreen(
     restaurant: RestaurantResult,
     userModel: UserModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit
+    onNavigateToResults: () -> Unit,
+    sessionCode: String
 ) {
     val restaurants by rememberSaveable {
         mutableStateOf(restaurant.businesses)
@@ -66,7 +69,7 @@ fun ResultScreen(
 
     Column {
         TopAppBar(
-            title = { Text(text = "Number of Votes: $numVotes")},
+            title = { Text(text = "Code: $sessionCode")},
             colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
             ),

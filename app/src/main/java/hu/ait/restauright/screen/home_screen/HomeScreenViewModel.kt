@@ -30,7 +30,8 @@ class HomeScreenViewModel : ViewModel() {
         database = FirebaseDatabase.getInstance().getReference("sessions")
     }
 
-    private fun createNewSession(code: String, id: String, callback: (Session?) -> Unit) {
+    // Ensures session codes are unique: If the code is already in the database, will randomly generate a new one and try again
+    private fun createNewSession(code: String, id: String, zipCode: String, callback: (Session?) -> Unit) {
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (childSnapshot in dataSnapshot.children) {
@@ -39,36 +40,43 @@ class HomeScreenViewModel : ViewModel() {
 
                     if (sessionCode != null && sessionCode == code) {
                         val newCode = (100000..999999).random().toString()
-                         createNewSession(newCode, id, callback)
+                         createNewSession(newCode, id, zipCode, callback)
                     }
                 }
 
-                val session = Session(id, code)
+                val session = Session(id, code, zipCode)
                 callback(session)
 
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                callback(null)
             }
         })
     }
-    fun createSession() {
+    fun createSession(zipCode: String, callback: (Session?) -> Unit) {
         homeUiState = HomeUiState.Loading
 
         try {
             val id = database.push().key!!
             val code = (100000..999999).random().toString()
-            createNewSession(code, id) { result ->
-                database.child(id).setValue(result)
-                    .addOnCompleteListener {
-                        homeUiState = HomeUiState.RegisterSuccess
-                    }
-                    .addOnFailureListener {
-                        homeUiState = HomeUiState.Error(it.message)
-                    }
-            }
+            createNewSession(code, id, zipCode) { result ->
+                if (result == null) {
+                    homeUiState = HomeUiState.Error("Something went wrong")
 
+                }
+                else {
+                    database.child(id).setValue(result)
+                        .addOnCompleteListener {
+                            Log.d("DEBUG", "createSession: complete $result ")
+                            homeUiState = HomeUiState.RegisterSuccess
+                            callback(result)
+                        }
+                        .addOnFailureListener {
+                            homeUiState = HomeUiState.Error(it.message)
+                        }
+                }
+            }
 
         } catch (e: Exception) {
             Log.d("createSession", "createSession: Error $e")
@@ -76,7 +84,7 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    suspend fun joinSession(code: String, callback: (String) -> Unit) {
+    suspend fun joinSession(code: String, callback: (Session) -> Unit) {
         homeUiState = HomeUiState.Loading
 
         try {
@@ -88,16 +96,14 @@ class HomeScreenViewModel : ViewModel() {
 
                         if (sessionCode != null && sessionCode == code) {
                             // Call the callback with the result
-                            callback(session.id)
+                            homeUiState = HomeUiState.LoginSuccess
+                            callback(session)
                             return
                         }
                     }
 
-                    // Code doesn't exist, handle accordingly
-                    // TODO: Implement logic for when the code doesn't exist
-
                     // Call the callback with the result
-                    callback("Code does not exist")
+                    homeUiState = HomeUiState.Error("No session with that code. Enter a new code and try again.")
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -105,7 +111,7 @@ class HomeScreenViewModel : ViewModel() {
                     Log.e("Firebase", "Error querying database: ${databaseError.message}")
 
                     // Call the callback with an error message
-                    callback("Error querying database")
+                    homeUiState = HomeUiState.Error("Something went wrong")
                 }
             })
         } catch (e: java.lang.Exception) {
