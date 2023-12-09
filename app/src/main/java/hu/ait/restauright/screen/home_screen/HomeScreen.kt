@@ -173,7 +173,9 @@ fun CreateNewSessionForm(
                     .padding(10.dp),
                 value = zipCode,
                 onValueChange = {
-                    zipCode = it
+                    if (!it.isNullOrBlank()) {
+                        zipCode = it
+                    }
                 },
                 label = { Text(text = "Zip Code") }
             )

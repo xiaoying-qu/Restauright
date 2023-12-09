@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 fun RestaurightNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "sign_in"
+    startDestination: String = "home_screen"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
