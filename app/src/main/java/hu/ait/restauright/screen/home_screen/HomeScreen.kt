@@ -168,14 +168,14 @@ fun CreateNewSessionForm(
             )
 
             Button(onClick = {
-                var sessionCode: String = "error"
                 homeScreenViewModel.createSession(zipCode) {result ->
-                    Log.d("DEBUG", "CreateNewSessionForm: $result")
+                    var sessionCode: String
                     if (result != null) {
                         sessionCode = result.code
+                        onNavigateToRestaurants(zipCode, sessionCode)
                     }
                 }
-                onNavigateToRestaurants(zipCode, sessionCode)
+
             }) {
                 Text(text = "Create Session")
             }
