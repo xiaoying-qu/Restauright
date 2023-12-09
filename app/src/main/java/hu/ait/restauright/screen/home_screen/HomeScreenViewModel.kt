@@ -68,7 +68,6 @@ class HomeScreenViewModel : ViewModel() {
                 else {
                     database.child(id).setValue(result)
                         .addOnCompleteListener {
-                            Log.d("DEBUG", "createSession: complete $result ")
                             homeUiState = HomeUiState.RegisterSuccess
                             callback(result)
                         }

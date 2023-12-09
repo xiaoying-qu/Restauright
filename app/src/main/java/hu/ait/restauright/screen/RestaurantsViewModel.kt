@@ -38,6 +38,5 @@ class RestaurantsViewModel @Inject constructor(
                 RestaurantUiState.Error(e.message!!)
             }
         }
-
     }
 }
