@@ -51,7 +51,7 @@ import hu.ait.restauright.location.LocationManager
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigateToRestaurants: (String, String) -> Unit,
+    onNavigateToRestaurants: (String, String, String) -> Unit,
     homeScreenViewModel: HomeScreenViewModel = viewModel()
 ) {
     var userText by rememberSaveable {
@@ -83,7 +83,7 @@ fun HomeScreen(
                 coroutineScope.launch {
                     homeScreenViewModel.joinSession(userText) { result ->
                         if (result != null) {
-                            onNavigateToRestaurants(result.zipCode, result.code)
+                            onNavigateToRestaurants(result.zipCode, result.code, result.id)
                         }
                     }
                 }
@@ -133,7 +133,7 @@ fun HomeScreen(
 fun CreateNewSessionForm(
     homeScreenViewModel: HomeScreenViewModel = viewModel(),
     onDialogDismiss: () -> Unit = {},
-    onNavigateToRestaurants: (String, String) -> Unit
+    onNavigateToRestaurants: (String, String, String) -> Unit
 ) {
     Dialog(onDismissRequest = onDialogDismiss) {
         var showLocationRequest by rememberSaveable {
@@ -182,8 +182,7 @@ fun CreateNewSessionForm(
                 homeScreenViewModel.createSession(zipCode) {result ->
                     var sessionCode: String
                     if (result != null) {
-                        sessionCode = result.code
-                        onNavigateToRestaurants(zipCode, sessionCode)
+                        onNavigateToRestaurants(zipCode, result.code, result.id)
                     }
                 }
 

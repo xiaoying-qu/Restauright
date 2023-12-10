@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import hu.ait.restauright.Data.Session
 import hu.ait.restauright.Data.restaurant_result.Businesse
 import hu.ait.restauright.Data.restaurant_result.RestaurantResult
 import hu.ait.restauright.components.CardStack
@@ -38,19 +39,20 @@ fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
     onNavigateToResults: () -> Unit,
-    location: String,
-    sessionCode: String
+    sessionCode: String,
+    sessionId: String,
+    sessionZipCode: String
 ) {
     Log.d("DEBUG", "DisplayRestaurantsScreen: $sessionCode")
     LaunchedEffect(key1 = Unit) {
-        restaurantsViewModel.getRestaurants(location)
+        restaurantsViewModel.getRestaurants(sessionZipCode)
     }
 
     Column {
         when (restaurantsViewModel.restaurantUiState) {
             is RestaurantUiState.Init -> {}
             is RestaurantUiState.Loading -> CircularProgressIndicator()
-            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults, sessionCode = sessionCode)
+            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults, sessionCode = sessionCode, sessionId = sessionId)
             is RestaurantUiState.Error -> Text(text = "Error: ${(restaurantsViewModel.restaurantUiState as RestaurantUiState.Error).errorMsg}")
         }
     }
@@ -62,7 +64,8 @@ fun ResultScreen(
     restaurant: RestaurantResult,
     userModel: UserModel = hiltViewModel(),
     onNavigateToResults: () -> Unit,
-    sessionCode: String
+    sessionCode: String,
+    sessionId: String,
 ) {
     val restaurants by rememberSaveable {
         mutableStateOf(restaurant.businesses)
@@ -87,7 +90,7 @@ fun ResultScreen(
             Text(text = "No restaurants found")
         }
         else {
-            CardStack(items = restaurants!!)
+            CardStack(items = restaurants!!, sessionId = sessionId)
 
             /*LazyColumn(
                 modifier = Modifier.padding(10.dp)

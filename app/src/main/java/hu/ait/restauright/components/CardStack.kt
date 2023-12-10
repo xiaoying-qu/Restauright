@@ -17,8 +17,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.Data.restaurant_result.Businesse
+import hu.ait.restauright.screen.RestaurantsViewModel
 import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -29,7 +32,9 @@ fun CardStack(
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Businesse) -> Unit = {},
     onSwipeRight: (item: Businesse) -> Unit = {},
-    onEmptyStack: (lastItem: Businesse) -> Unit = {}
+    onEmptyStack: (lastItem: Businesse) -> Unit = {},
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
+    sessionId: String
 ) {
     var options by remember {
         mutableStateOf(items.size - 1)
@@ -66,24 +71,32 @@ fun CardStack(
                 .draggableStack(
                     controller = cardStackController,
                     thresholdConfig = thresholdConfig,
-                    velocityThreshold = velocityThreshold
+                    velocityThreshold = velocityThreshold,
+                    onRightSwipe = {
+                        restaurantsViewModel.voteForRestaurant(
+                            items[items.size - options - 1],
+                            sessionId
+                        )
+                    }
                 )
                 .fillMaxHeight()
         ) {
             items.asReversed().forEachIndexed { index, item ->
                 Card(
-                    modifier = Modifier.moveTo(
-                        x = if (index == options) cardStackController.offsetX.value else 0f,
-                        y = if (index == options) cardStackController.offsetY.value else 0f
-                    )
-                        .visible(visible = index == options || index == options -1)
+                    modifier = Modifier
+                        .moveTo(
+                            x = if (index == options) cardStackController.offsetX.value else 0f,
+                            y = if (index == options) cardStackController.offsetY.value else 0f
+                        )
+                        .visible(visible = index == options || index == options - 1)
                         .graphicsLayer(
                             rotationZ = if (index == options) cardStackController.rotation.value else 0f,
                             scaleX = if (index < options) cardStackController.scale.value else 1f,
                             scaleY = if (index < options) cardStackController.scale.value else 1f
                         ),
                     item,
-                    cardStackController
+                    cardStackController,
+                    sessionId = sessionId
                 )
             }
         }
@@ -93,7 +106,9 @@ fun CardStack(
 fun Card(
     modifier: Modifier = Modifier,
     item: Businesse,
-    cardStackController: CardStackController
+    cardStackController: CardStackController,
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
+    sessionId: String
 ) {
     Box(modifier = modifier) {
         if (item.imageUrl != null) {
@@ -131,11 +146,16 @@ fun Card(
 
                 IconButton(
                     modifier = modifier.padding(0.dp, 0.dp, 50.dp, 0.dp),
-                    onClick = { cardStackController.swipeRight() }
+                    onClick = {
+                        cardStackController.swipeRight()
+                        restaurantsViewModel.voteForRestaurant(item, sessionId)
+                    }
                 ) {
                     Icon(
                         Icons.Default.FavoriteBorder, contentDescription = "", tint = Color.White, modifier =
-                        modifier.height(50.dp).width(50.dp)
+                        modifier
+                            .height(50.dp)
+                            .width(50.dp)
                     )
                 }
             }

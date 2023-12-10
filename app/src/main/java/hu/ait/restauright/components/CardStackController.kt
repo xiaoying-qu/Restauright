@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import hu.ait.restauright.Data.restaurant_result.Businesse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -146,7 +147,8 @@ fun rememberCardStackController(
 fun Modifier.draggableStack(
     controller: CardStackController,
     thresholdConfig: (Float, Float) -> ThresholdConfig,
-    velocityThreshold: Dp = 125.dp
+    velocityThreshold: Dp = 125.dp,
+    onRightSwipe: () -> Unit = {},
 ): Modifier = composed {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -177,6 +179,7 @@ fun Modifier.draggableStack(
                         controller.returnCenter()
                     } else {
                         controller.swipeRight()
+                        onRightSwipe()
                     }
                 }
             },
