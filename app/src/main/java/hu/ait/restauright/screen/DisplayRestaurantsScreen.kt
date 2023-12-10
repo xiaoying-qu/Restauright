@@ -52,7 +52,15 @@ fun DisplayRestaurantsScreen (
         when (restaurantsViewModel.restaurantUiState) {
             is RestaurantUiState.Init -> {}
             is RestaurantUiState.Loading -> CircularProgressIndicator()
-            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults, sessionCode = sessionCode, sessionId = sessionId)
+            is RestaurantUiState.Success -> {
+                restaurantsViewModel.addRestaurauntsToSession((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant.businesses, sessionId)
+                ResultScreen(
+                    (restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant,
+                    onNavigateToResults = onNavigateToResults,
+                    sessionCode = sessionCode,
+                    sessionId = sessionId
+                )
+            }
             is RestaurantUiState.Error -> Text(text = "Error: ${(restaurantsViewModel.restaurantUiState as RestaurantUiState.Error).errorMsg}")
         }
     }

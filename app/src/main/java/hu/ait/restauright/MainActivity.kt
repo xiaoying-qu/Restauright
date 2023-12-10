@@ -17,7 +17,7 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.home_screen.HomeScreen
-import hu.ait.restauright.screen.ResultsScreen
+import hu.ait.restauright.screen.results.ResultsScreen
 import hu.ait.restauright.screen.SignInScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
 
