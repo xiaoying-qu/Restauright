@@ -1,6 +1,7 @@
 package hu.ait.restauright.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -144,16 +145,20 @@ fun Card(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(
+                Button(
                     modifier = modifier.padding(0.dp, 0.dp, 50.dp, 0.dp),
                     onClick = {
                         cardStackController.swipeRight()
                         restaurantsViewModel.voteForRestaurant(item, sessionId)
-                    }
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                 ) {
                     Icon(
-                        Icons.Default.FavoriteBorder, contentDescription = "", tint = Color.White, modifier =
-                        modifier
+                        Icons.Default.FavoriteBorder,
+                        contentDescription = "",
+                        tint = Color.White,
+                        modifier = modifier
                             .height(50.dp)
                             .width(50.dp)
                     )
