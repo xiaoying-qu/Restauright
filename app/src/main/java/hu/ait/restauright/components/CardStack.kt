@@ -32,7 +32,7 @@ fun CardStack(
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Businesse) -> Unit = {},
     onSwipeRight: (item: Businesse) -> Unit = {},
-    onEmptyStack: (lastItem: Businesse) -> Unit = {},
+    onNavigateToResults: (String) -> Unit = {},
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
     sessionId: String
 ) {
@@ -41,7 +41,7 @@ fun CardStack(
     }
 
     if (options == -1) {
-        onEmptyStack(items.last())
+        onNavigateToResults(sessionId)
     }
 
     val cardStackController = rememberCardStackController()

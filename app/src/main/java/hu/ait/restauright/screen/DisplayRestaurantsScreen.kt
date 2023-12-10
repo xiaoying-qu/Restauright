@@ -38,7 +38,7 @@ import hu.ait.restauright.components.CardStack
 fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit,
+    onNavigateToResults: (String) -> Unit,
     sessionCode: String,
     sessionId: String,
     sessionZipCode: String
@@ -63,7 +63,7 @@ fun DisplayRestaurantsScreen (
 fun ResultScreen(
     restaurant: RestaurantResult,
     userModel: UserModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit,
+    onNavigateToResults: (String) -> Unit,
     sessionCode: String,
     sessionId: String,
 ) {
@@ -77,29 +77,14 @@ fun ResultScreen(
             title = { Text(text = "Code: $sessionCode")},
             colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ),
-            actions = {
-                IconButton(onClick = {
-                    onNavigateToResults()
-                }) {
-                    Icon(Icons.Filled.CheckCircle, null)
-                }
-            }
+            )
         )
         if (restaurants.isNullOrEmpty()) {
             Text(text = "No restaurants found")
         }
         else {
-            CardStack(items = restaurants!!, sessionId = sessionId)
+            CardStack(items = restaurants!!, sessionId = sessionId, onNavigateToResults = onNavigateToResults)
 
-            /*LazyColumn(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                items(restaurants!!) {
-                    restaurantCard(restaurant = it, userModel = userModel, numVotes)
-                }
-            }
-             */
         }
     }
 }

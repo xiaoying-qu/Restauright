@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ResultsScreen (
     modifier: Modifier = Modifier,
+    sessionId: String
 ) {
     Column(
         modifier = Modifier.padding(10.dp)
