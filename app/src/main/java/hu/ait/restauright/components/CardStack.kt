@@ -1,5 +1,7 @@
 package hu.ait.restauright.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -7,14 +9,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -24,12 +29,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.Data.restaurant_result.Businesse
 import hu.ait.restauright.screen.RestaurantsViewModel
 import kotlin.math.roundToInt
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardStack(
     modifier: Modifier = Modifier,
     items: List<Businesse>,
-    thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f)},
+    thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Businesse) -> Unit = {},
     onSwipeRight: (item: Businesse) -> Unit = {},
@@ -103,6 +109,7 @@ fun CardStack(
         }
     }
 }
+
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
@@ -115,7 +122,7 @@ fun Card(
         if (item.imageUrl != null) {
             AsyncImage(
                 model = item.imageUrl,
-                contentDescription = "",
+                contentDescription = "Restaurant Image",
                 contentScale = ContentScale.Crop,
                 modifier = modifier.fillMaxSize()
             )
@@ -124,14 +131,44 @@ fun Card(
         Column(
             modifier = modifier
                 .align(Alignment.BottomStart)
-                .padding(10.dp)
+                .background(
+                    Brush.verticalGradient(
+                        0F to Color.Transparent,
+                        .1F to Color.Black.copy(alpha = 0.5F),
+                        1F to Color.Black.copy(alpha = 0.7F)
+
+                    )
+
+                )
+                .padding(start = 8.dp, end = 8.dp, bottom = 24.dp, top = 8.dp)
+
         ) {
-            Text(text = item.alias!!, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 25.sp)
-
-            Text(text = item.categories.toString(), color = Color.White, fontSize = 20.sp)
-
+            Text(
+                text = item.alias!!,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp
+            )  //display restaurant name
+            Text(
+                text = item.categories?.get(0)?.title.toString(),
+                color = Color.White,
+                fontSize = 20.sp
+            )   //display restaurant food category
+            Text(
+                text = if (item.price == null) "??" else item.price.toString(),
+                color = Color.White,
+                fontSize = 20.sp
+            )   //display price range
+            Text(
+                text = "${item.rating.toString()} Star",
+                color = Color.White,
+                fontSize = 20.sp
+            )   //display rating
+            Spacer(modifier = Modifier.size(22.dp))
             Row {
-                IconButton(
+                Button(
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(backgroundColor =Color.Transparent),
                     modifier = modifier.padding(50.dp, 0.dp, 0.dp, 0.dp),
                     onClick = { cardStackController.swipeLeft() },
                 ) {
@@ -182,7 +219,7 @@ fun Modifier.moveTo(
 
 fun Modifier.visible(
     visible: Boolean = true
-) = this.then(Modifier.layout{ measurable, constraints ->
+) = this.then(Modifier.layout { measurable, constraints ->
     val placeable = measurable.measure(constraints)
 
     if (visible) {
