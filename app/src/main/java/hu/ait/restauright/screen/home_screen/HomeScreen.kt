@@ -173,7 +173,9 @@ fun CreateNewSessionForm(
                     .padding(10.dp),
                 value = zipCode,
                 onValueChange = {
-                    zipCode = it
+                    if (!it.isNullOrBlank()) {
+                        zipCode = it
+                    }
                 },
                 label = { Text(text = "Zip Code") }
             )
@@ -205,12 +207,7 @@ fun getUserLocation(
         )
         if (fineLocationPermissionState.status.isGranted) {
         Column {
-
-            Button(onClick = {
-                locationViewModel.startLocationMonitoring()
-            }) {
-                Text(text = "Start location monitoring")
-            }
+            locationViewModel.startLocationMonitoring()
             Text(
                 text = "Location: ${getLocationText(locationViewModel.locationState.value)}"
             )
