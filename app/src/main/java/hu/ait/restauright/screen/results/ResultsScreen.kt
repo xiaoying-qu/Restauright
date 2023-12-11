@@ -1,8 +1,12 @@
 package hu.ait.restauright.screen.results
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,11 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import hu.ait.restauright.screen.login.ResultsUiState
 import hu.ait.restauright.screen.login.ResultsViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.text.AnnotatedString
 import hu.ait.restauright.Data.Restaurant
+import hu.ait.restauright.Data.restaurant_result.Businesse
+import hu.ait.restauright.screen.UserModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +42,7 @@ import hu.ait.restauright.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultsScreen(
+    modifier: Modifier = Modifier,
     sessionId: String,
     resultsViewModel: ResultsViewModel = viewModel()
 ) {
@@ -55,7 +65,7 @@ fun ResultsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
+                    /*Icon(
                         painter = rememberAsyncImagePainter(R.drawable.logo),
                         contentDescription = "Logo Image",
                         tint = Color.Unspecified,
@@ -63,11 +73,12 @@ fun ResultsScreen(
                             .size(45.dp)
                     )
 
-//                    Text(
-//                        text = "Results",
-//                        modifier = Modifier.padding(16.dp)
-//                            .size(45.dp)
-//                    )
+                     */
+                    Text(
+                        text = "Results",
+                        modifier = Modifier.padding(16.dp)
+                            .size(45.dp)
+                    )
                 }
             }
         )
@@ -77,14 +88,14 @@ fun ResultsScreen(
                 .padding(16.dp)
         ) {
             items(restaurants) {
-                RestaurantCard(restaurant = it)
+                restaurantCard(restaurant = it)
             }
         }
     }
 }
 
 @Composable
-fun RestaurantCard(
+fun restaurantCard(
     restaurant: Restaurant?
 ) {
     Column(

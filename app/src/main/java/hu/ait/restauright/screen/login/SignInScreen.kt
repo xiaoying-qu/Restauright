@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -71,7 +70,7 @@ fun SignInScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(0.8f),
             label = {
-                Text(text = stringResource(R.string.e_mail))
+                Text(text = "E-mail")
             },
             value = email,
             onValueChange = {
@@ -85,7 +84,7 @@ fun SignInScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(0.8f),
             label = {
-                Text(text = stringResource(R.string.password))
+                Text(text = "Password")
             },
             value = password,
             onValueChange = { password = it },
@@ -105,12 +104,12 @@ fun SignInScreen(
                     }
                 }
             }) {
-                Text(text = stringResource(R.string.login))
+                Text(text = "Login")
             }
             OutlinedButton(onClick = {
                 loginViewModel.registerUser(email, password)
             }) {
-                Text(text = stringResource(R.string.register))
+                Text(text = "Register")
             }
         }
 
@@ -124,15 +123,14 @@ fun SignInScreen(
         ) {
             when (loginViewModel.loginUiState) {
                 is LoginUiState.Loading -> CircularProgressIndicator()
-                is LoginUiState.RegisterSuccess -> Text(text = stringResource(R.string.registration_ok))
+                is LoginUiState.RegisterSuccess -> Text(text = "Registration OK")
                 is LoginUiState.Error -> Text(
-                    text = stringResource(
-                        R.string.error,
-                        (loginViewModel.loginUiState as LoginUiState.Error).error!!
-                    )
+                    text = "Error: ${
+                        (loginViewModel.loginUiState as LoginUiState.Error).error
+                    }"
                 )
 
-                is LoginUiState.LoginSuccess -> Text(text = stringResource(R.string.login_ok))
+                is LoginUiState.LoginSuccess -> Text(text = "Login OK")
                 LoginUiState.Init -> {}
             }
         }
