@@ -17,7 +17,7 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.home_screen.HomeScreen
-import hu.ait.restauright.screen.ResultsScreen
+import hu.ait.restauright.screen.results.ResultsScreen
 import hu.ait.restauright.screen.SignInScreen
 import hu.ait.restauright.ui.theme.RestaurightTheme
 
@@ -74,8 +74,8 @@ fun RestaurightNavHost(
             val sessionCode = it.arguments?.getString("sessionCode")
             if (location != null && sessionCode != null) {
                 DisplayRestaurantsScreen(
-                    onNavigateToResults = { ->
-                        navController.navigate("results")
+                    onNavigateToResults = {sessionId ->
+                        navController.navigate("results/$sessionId")
                     },
                     location = location,
                     sessionCode = sessionCode
@@ -83,6 +83,16 @@ fun RestaurightNavHost(
             }
         }
 
-        composable("results") { ResultsScreen() }
+        composable("results/{sessionId}",
+            arguments = listOf(
+                navArgument("sessionId"){type = NavType.StringType},
+            )) {
+            val sessionId = it.arguments?.getString("sessionId")
+            if (sessionId != null) {
+                ResultsScreen(
+                    sessionId = sessionId
+                )
+            }
+        }
     }
 }

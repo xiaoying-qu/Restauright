@@ -39,7 +39,7 @@ fun DisplayRestaurantsScreen (
     modifier: Modifier = Modifier,
 
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit,
+    onNavigateToResults: (String) -> Unit,
     sessionCode: String,
     sessionId: String,
     sessionZipCode: String
@@ -53,7 +53,15 @@ fun DisplayRestaurantsScreen (
         when (restaurantsViewModel.restaurantUiState) {
             is RestaurantUiState.Init -> {}
             is RestaurantUiState.Loading -> CircularProgressIndicator()
-            is RestaurantUiState.Success -> ResultScreen((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant, onNavigateToResults = onNavigateToResults, sessionCode = sessionCode, sessionId = sessionId)
+            is RestaurantUiState.Success -> {
+                restaurantsViewModel.addRestaurauntsToSession((restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant.businesses, sessionId)
+                ResultScreen(
+                    (restaurantsViewModel.restaurantUiState as RestaurantUiState.Success).Restaurant,
+                    onNavigateToResults = onNavigateToResults,
+                    sessionCode = sessionCode,
+                    sessionId = sessionId
+                )
+            }
             is RestaurantUiState.Error -> Text(text = "Error: ${(restaurantsViewModel.restaurantUiState as RestaurantUiState.Error).errorMsg}")
         }
     }
@@ -64,7 +72,7 @@ fun DisplayRestaurantsScreen (
 fun ResultScreen(
     restaurant: RestaurantResult,
     userModel: UserModel = hiltViewModel(),
-    onNavigateToResults: () -> Unit,
+    onNavigateToResults: (String) -> Unit,
     sessionCode: String,
     sessionId: String,
 ) {
@@ -78,29 +86,14 @@ fun ResultScreen(
             title = { Text(text = "Code: $sessionCode")},
             colors = TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ),
-            actions = {
-                IconButton(onClick = {
-                    onNavigateToResults()
-                }) {
-                    Icon(Icons.Filled.CheckCircle, null)
-                }
-            }
+            )
         )
         if (restaurants.isNullOrEmpty()) {
             Text(text = "No restaurants found")
         }
         else {
-            CardStack(items = restaurants!!, sessionId = sessionId)
+            CardStack(items = restaurants!!, sessionId = sessionId, onNavigateToResults = onNavigateToResults)
 
-            /*LazyColumn(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                items(restaurants!!) {
-                    restaurantCard(restaurant = it, userModel = userModel, numVotes)
-                }
-            }
-             */
         }
     }
 }

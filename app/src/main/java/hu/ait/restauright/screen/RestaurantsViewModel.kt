@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.BuildConfig
+import hu.ait.restauright.Data.Restaurant
 import hu.ait.restauright.Data.Session
 import hu.ait.restauright.Data.restaurant_result.Businesse
 import hu.ait.restauright.Data.restaurant_result.RestaurantResult
@@ -60,12 +61,41 @@ class RestaurantsViewModel @Inject constructor(
         }
     }
 
+    fun addRestaurauntsToSession(restaurants: List<Businesse>?, sessionId: String) {
+        val sessionReference = database.child(sessionId).child("restaurants")
+        for (restaurant in restaurants!!) {
+            // Check if the restaurant with the specified key already exists
+            sessionReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        // Restaurant with the key does not exist, add it
+                        val restaurantKey = restaurant.id
+                        val restaurantObject = restaurantKey?.let {
+                            Restaurant(
+                                id = it,
+                                restaurant = restaurant,
+                                votes = 0
+                            )
+                        }
+                        sessionReference.child(restaurantKey.orEmpty()).setValue(restaurantObject)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("ERROR", "addRestaurauntsToSession: Error")
+                }
+            })
+        }
+    }
+
+
     fun voteForRestaurant(restaurant: Businesse, sessionId: String) {
         val restaurant_id = restaurant.id
         if (restaurant_id != null) {
             val sessionReference = database.child(sessionId).child("restaurants").child(restaurant_id)
             sessionReference.child("votes").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
+
                     val currentVotes = dataSnapshot.getValue(Long::class.java) ?: 0
 
                     // Update the votes count

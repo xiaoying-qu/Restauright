@@ -1,12 +1,17 @@
 package hu.ait.restauright.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,11 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import hu.ait.restauright.R
 import hu.ait.restauright.screen.login.LoginScreenViewModel
 import hu.ait.restauright.screen.login.LoginUiState
 import kotlinx.coroutines.launch
@@ -46,70 +53,70 @@ fun SignInScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Box() {
-        Text(
-            text = "AIT Forum",
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo_font),
+            contentDescription = null,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 50.dp),
-            fontSize = 30.sp
+                .fillMaxWidth(0.8f)
+
         )
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Spacer(modifier = Modifier.size(24.dp))
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            label = {
+                Text(text = "E-mail")
+            },
+            value = email,
+            onValueChange = {
+                email = it
+            },
+            singleLine = true,
+            leadingIcon = {
+                Icon(Icons.Default.Email, null)
+            }
+        )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            label = {
+                Text(text = "Password")
+            },
+            value = password,
+            onValueChange = { password = it },
+            singleLine = true,
+            visualTransformation =
+            if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                label = {
-                    Text(text = "E-mail")
-                },
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(Icons.Default.Email, null)
-                }
-            )
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                label = {
-                    Text(text = "Password")
-                },
-                value = password,
-                onValueChange = { password = it },
-                singleLine = true,
-                visualTransformation =
-                if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                OutlinedButton(onClick = {
-                    coroutineScope.launch {
-                        val result = loginViewModel.loginUser(email,password)
-                        if (result?.user != null) {
-                            onNavigateToHomeScreen()
-                        }
+            OutlinedButton(onClick = {
+                coroutineScope.launch {
+                    val result = loginViewModel.loginUser(email, password)
+                    if (result?.user != null) {
+                        onNavigateToHomeScreen()
                     }
-                }) {
-                    Text(text = "Login")
                 }
-                OutlinedButton(onClick = {
-                    loginViewModel.registerUser(email,password)
-                }) {
-                    Text(text = "Register")
-                }
+            }) {
+                Text(text = "Login")
+            }
+            OutlinedButton(onClick = {
+                loginViewModel.registerUser(email, password)
+            }) {
+                Text(text = "Register")
             }
         }
+
+
+        // Loading and error states
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(bottom = 50.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -117,13 +124,15 @@ fun SignInScreen(
             when (loginViewModel.loginUiState) {
                 is LoginUiState.Loading -> CircularProgressIndicator()
                 is LoginUiState.RegisterSuccess -> Text(text = "Registration OK")
-                is LoginUiState.Error -> Text(text = "Error: ${
-                    (loginViewModel.loginUiState as LoginUiState.Error).error
-                }")
+                is LoginUiState.Error -> Text(
+                    text = "Error: ${
+                        (loginViewModel.loginUiState as LoginUiState.Error).error
+                    }"
+                )
+
                 is LoginUiState.LoginSuccess -> Text(text = "Login OK")
                 LoginUiState.Init -> {}
             }
-
         }
     }
 }

@@ -36,14 +36,16 @@ fun CardStack(
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Businesse) -> Unit = {},
     onSwipeRight: (item: Businesse) -> Unit = {},
-    onEmptyStack: (lastItem: Businesse) -> Unit = {}
+    onNavigateToResults: (String) -> Unit = {},
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
+    sessionId: String
 ) {
     var options by remember {
         mutableStateOf(items.size - 1)
     }
 
     if (options == -1) {
-        onEmptyStack(items.last())
+        onNavigateToResults(sessionId)
     }
 
     val cardStackController = rememberCardStackController()
@@ -127,7 +129,6 @@ fun Card(
 
                 )
                 .padding(start = 8.dp, end = 8.dp, bottom = 24.dp, top = 8.dp)
-
         ) {
             Text(
                 text = item.alias!!,
@@ -170,7 +171,10 @@ fun Card(
 
                 Button(
                     modifier = modifier.padding(0.dp, 0.dp, 50.dp, 0.dp),
-                    onClick = { cardStackController.swipeRight() },
+                    onClick = {
+                        cardStackController.swipeRight()
+                        restaurantsViewModel.voteForRestaurant(item, sessionId)
+                    },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                 ) {
@@ -178,10 +182,7 @@ fun Card(
                         Icons.Default.FavoriteBorder,
                         contentDescription = "",
                         tint = Color.White,
-                        modifier =
-                        modifier
-                            .height(50.dp)
-                            .width(50.dp)
+                        modifier = modifier
                     )
                 }
             }
