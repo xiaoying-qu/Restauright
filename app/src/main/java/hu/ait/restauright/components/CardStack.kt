@@ -111,6 +111,7 @@ fun Card(
     sessionId: String,
     restaurantsViewModel: RestaurantsViewModel = hiltViewModel()
 ) {
+
     Box(modifier = modifier) {
         if (item.imageUrl != null) {
             AsyncImage(
@@ -136,7 +137,7 @@ fun Card(
                 .padding(start = 8.dp, end = 8.dp, bottom = 24.dp, top = 8.dp)
         ) {
             Text(
-                text = item.alias!!,
+                text = item.alias?.replace("-", " ") ?: "",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp

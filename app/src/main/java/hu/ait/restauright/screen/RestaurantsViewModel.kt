@@ -50,7 +50,12 @@ class RestaurantsViewModel @Inject constructor(
         restaurantUiState = RestaurantUiState.Loading
         viewModelScope.launch {
             restaurantUiState = try {
+<<<<<<< Updated upstream
                 val result = restaurantAPI.getRestaurants(location, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
+=======
+                val result = restaurantAPI.getRestaurantsbyZip(location, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
+                Log.d("DEBUG", "getWeather result: $result")
+>>>>>>> Stashed changes
                 RestaurantUiState.Success(result)
             }
             catch (e: Exception) {

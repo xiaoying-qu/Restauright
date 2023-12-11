@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.AuthResult
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -14,11 +14,17 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.Data.Session
-import kotlinx.coroutines.tasks.await
+import hu.ait.restauright.network.RestaurantAPI
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class HomeScreenViewModel : ViewModel() {
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
+    private val restaurantAPI: RestaurantAPI
+) : ViewModel() {
 
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Init)
 
@@ -28,6 +34,35 @@ class HomeScreenViewModel : ViewModel() {
     init {
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance().getReference("sessions")
+    }
+    fun createNewSessionByCoord(
+        code: String,
+        id: String,
+        lat: Double,
+        lon: Double,
+        callback: (Session?) -> Unit
+    ) {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (childSnapshot in dataSnapshot.children) {
+                    val session = childSnapshot.getValue(Session::class.java)
+                    val sessionCode = session?.code
+
+                    if (sessionCode != null && sessionCode == code) {
+                        val newCode = (100000..999999).random().toString()
+                        createNewSessionByCoord(newCode, id, lat,lon, callback)
+                    }
+                }
+
+                val session = Session(id, code, null.toString(),lat, lon)
+                callback(session)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(null)
+            }
+        })
     }
 
         // Ensures session codes are unique: If the code is already in the database, will randomly generate a new one and try again
@@ -59,36 +94,62 @@ class HomeScreenViewModel : ViewModel() {
                 }
             })
         }
+    fun createSessionByCoord(lat: Double, lon: Double, callback: (Session?) -> Unit) {
+        homeUiState = HomeUiState.Loading
 
-        fun createSession(zipCode: String, callback: (Session?) -> Unit) {
-            homeUiState = HomeUiState.Loading
+        try {
+            val id = database.push().key!!
+            val code = (100000..999999).random().toString()
+            createNewSessionByCoord(code, id, lat,lon) { result ->
+                if (result == null) {
+                    homeUiState = HomeUiState.Error("Something went wrong")
 
-            try {
-                val id = database.push().key!!
-                val code = (100000..999999).random().toString()
-                createNewSession(code, id, zipCode) { result ->
-                    if (result == null) {
-                        homeUiState = HomeUiState.Error("Something went wrong")
-
-                    } else {
-                        database.child(id).setValue(result)
-                            .addOnCompleteListener {
-                                Log.d("DEBUG", "createSession: complete $result ")
-                                homeUiState = HomeUiState.RegisterSuccess
-                                callback(result)
-                            }
-                            .addOnFailureListener {
-                                homeUiState = HomeUiState.Error(it.message)
-                            }
-                    }
+                } else {
+                    database.child(id).setValue(result)
+                        .addOnCompleteListener {
+                            Log.d("DEBUG", "createSession: complete $result ")
+                            homeUiState = HomeUiState.RegisterSuccess
+                            callback(result)
+                        }
+                        .addOnFailureListener {
+                            homeUiState = HomeUiState.Error(it.message)
+                        }
                 }
-
-            } catch (e: Exception) {
-                Log.d("createSession", "createSession: Error $e")
-                homeUiState = HomeUiState.Error(e.message)
             }
-        }
 
+        } catch (e: Exception) {
+            Log.d("createSession", "createSession: Error $e")
+            homeUiState = HomeUiState.Error(e.message)
+        }
+    }
+    fun createSession(zipCode: String, callback: (Session?) -> Unit) {
+        homeUiState = HomeUiState.Loading
+
+        try {
+            val id = database.push().key!!
+            val code = (100000..999999).random().toString()
+            createNewSession(code, id, zipCode) { result ->
+                if (result == null) {
+                    homeUiState = HomeUiState.Error("Something went wrong")
+
+                } else {
+                    database.child(id).setValue(result)
+                        .addOnCompleteListener {
+                            Log.d("DEBUG", "createSession: complete $result ")
+                            homeUiState = HomeUiState.RegisterSuccess
+                            callback(result)
+                        }
+                        .addOnFailureListener {
+                            homeUiState = HomeUiState.Error(it.message)
+                        }
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.d("createSession", "createSession: Error $e")
+            homeUiState = HomeUiState.Error(e.message)
+        }
+    }
         suspend fun joinSession(code: String, callback: (Session) -> Unit) {
             homeUiState = HomeUiState.Loading
 
@@ -126,6 +187,24 @@ class HomeScreenViewModel : ViewModel() {
             }
         }
 
+
+
+    fun getRestaurantsbyCoord(lat: Double, lon: Double, term:String,apiKey:String){
+        Log.d("in homescreen view model","in homescreen")
+        homeUiState = HomeUiState.Loading
+
+        viewModelScope.launch {
+
+            try{
+                val restaurantResult = restaurantAPI.getRestaurantsbyCoord(lat,lon,term,apiKey)
+                homeUiState = HomeUiState.Success(restaurantResult)
+            }catch(e: Exception){
+                homeUiState = HomeUiState.Error(e.message!!)
+            }
+
+        }
+    }
+
     }
 
     sealed interface HomeUiState {
@@ -134,4 +213,5 @@ class HomeScreenViewModel : ViewModel() {
         object LoginSuccess : HomeUiState
         object RegisterSuccess : HomeUiState
         data class Error(val error: String?) : HomeUiState
+        data class Success(val restaurantResult: Unit): HomeUiState
     }

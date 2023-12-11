@@ -7,8 +7,15 @@ import retrofit2.http.Query
 
 interface RestaurantAPI {
     @GET("/v3/businesses/search")
-    suspend fun getRestaurants(@Query("location") location: String,
-                               @Query("term") term: String,
-                               @Header("Authorization") apiKey: String,
+    suspend fun getRestaurantsbyZip(@Query("location") location: String,
+                                    @Query("term") term: String,
+                                    @Header("Authorization") apiKey: String,
                                ) : RestaurantResult
+
+    suspend fun getRestaurantsbyCoord(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("term") term: String,
+        @Header("Authorization") apiKey: String,
+    )
 }

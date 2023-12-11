@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import hu.ait.restauright.Data.restaurant_result.Coordinates
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.home_screen.HomeScreen
 import hu.ait.restauright.screen.results.ResultsScreen
@@ -59,12 +60,56 @@ fun RestaurightNavHost(
 
 
         composable("home_screen") {
-           HomeScreen(
-               onNavigateToRestaurants = {location, sessionCode, sessionId ->
-                   navController.navigate("display_restaurants/$location/$sessionCode/$sessionId")
-               }
-           )
+            HomeScreen(
+                onNavigateToRestaurants = { location, sessionCode, sessionId ->
+                    navController.navigate("display_restaurants/$location/$sessionCode/$sessionId")
+                },
+                onNavigateToRestaurantsByCoord = {lat,lon,sessionCode,sessionId->
+                    navController.navigate("display_restaurants/$lat/$lon/$sessionCode/$sessionId")
+
+                })
         }
+
+<<<<<<< Updated upstream
+        composable("display_restaurants/{zipCode}/{sessionCode}/{sessionId}",
+            arguments = listOf(
+                navArgument("zipCode"){type = NavType.StringType},
+            )) {
+            val zipCode = it.arguments?.getString("zipCode")
+            val sessionCode = it.arguments?.getString("sessionCode")
+            val sessionId = it.arguments?.getString("sessionId")
+            if (zipCode != null && sessionCode != null && sessionId != null) {
+=======
+        composable(
+            "display_restaurants/{lat}/{lon}/{sessionCode}/{sessionId}",
+            arguments = listOf(
+                navArgument("lat") { type = NavType.StringType },
+                navArgument("lon") { type = NavType.StringType },
+                navArgument("sessionCode") { type = NavType.StringType },
+                navArgument("sessionId") { type = NavType.StringType },
+            )
+        ) {
+            val lat = it.arguments?.getString("lat")
+            val lon = it.arguments?.getString("lon")
+            val sessionCode = it.arguments?.getString("sessionCode")
+            val sessionId = it.arguments?.getString("sessionId")
+            if (lat != null && lon != null && sessionCode != null && sessionId != null) {
+>>>>>>> Stashed changes
+                DisplayRestaurantsScreen(
+                    onNavigateToResults = { sessionId ->
+                        navController.navigate("results/$sessionId")
+                    },
+<<<<<<< Updated upstream
+=======
+                    sessionZipCode = "",
+>>>>>>> Stashed changes
+                    sessionCode = sessionCode,
+                    sessionZipCode = zipCode,
+                    sessionId = sessionId
+                )
+            }
+        }
+
 
         composable("display_restaurants/{zipCode}/{sessionCode}/{sessionId}",
             arguments = listOf(
@@ -85,10 +130,13 @@ fun RestaurightNavHost(
             }
         }
 
-        composable("results/{sessionId}",
+
+        composable(
+            "results/{sessionId}",
             arguments = listOf(
-                navArgument("sessionId"){type = NavType.StringType},
-            )) {
+                navArgument("sessionId") { type = NavType.StringType },
+            )
+        ) {
             val sessionId = it.arguments?.getString("sessionId")
             if (sessionId != null) {
                 ResultsScreen(
