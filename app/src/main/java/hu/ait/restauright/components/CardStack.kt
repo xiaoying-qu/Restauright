@@ -26,6 +26,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import hu.ait.restauright.Data.restaurant_result.Businesse
 import kotlin.math.roundToInt
+import androidx.hilt.navigation.compose.hiltViewModel
+import hu.ait.restauright.screen.RestaurantsViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -93,7 +95,8 @@ fun CardStack(
                             scaleY = if (index < options) cardStackController.scale.value else 1f
                         ),
                     item,
-                    cardStackController
+                    cardStackController,
+                    sessionId
                 )
             }
         }
@@ -104,7 +107,9 @@ fun CardStack(
 fun Card(
     modifier: Modifier = Modifier,
     item: Businesse,
-    cardStackController: CardStackController
+    cardStackController: CardStackController,
+    sessionId: String,
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel()
 ) {
     Box(modifier = modifier) {
         if (item.imageUrl != null) {
