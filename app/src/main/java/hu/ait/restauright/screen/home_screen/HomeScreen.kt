@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
@@ -150,13 +151,16 @@ fun CreateNewSessionForm(
                     shape = MaterialTheme.shapes.medium
                 )
                 .padding(10.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(imageVector = Icons.Default.LocationOn,
                 contentDescription = "Location Icon",
                 Modifier.clickable {
                     showLocationRequest = true
-                })
+                }
+                    .size(50.dp))
             if (showLocationRequest){
                 getUserLocation()
             }

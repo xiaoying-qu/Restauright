@@ -4,8 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
@@ -20,6 +23,7 @@ import hu.ait.restauright.screen.login.ResultsUiState
 import hu.ait.restauright.screen.login.ResultsViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.text.AnnotatedString
 import hu.ait.restauright.Data.Restaurant
 import hu.ait.restauright.Data.restaurant_result.Businesse
@@ -47,12 +51,22 @@ fun ResultsScreen (
 
     Column(
         modifier = Modifier
-            .padding(10.dp)
-            .fillMaxHeight(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize()
     ) {
-        LazyColumn(modifier = Modifier) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Results",
+                    modifier = Modifier.padding(16.dp)
+                )
+
+            },
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
             items(restaurants) {
                 restaurantCard(restaurant = it)
             }
@@ -64,14 +78,25 @@ fun ResultsScreen (
 fun restaurantCard(
     restaurant: Restaurant?
 ) {
-    Column {
-        Card( modifier = Modifier
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(85.dp)
         ) {
-            Text(text = "${restaurant!!.restaurant.name}")
-            Text(text = "${restaurant.votes}")
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Text(text = "${restaurant?.restaurant?.name}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "${restaurant?.votes}")
+            }
         }
     }
-
 }
