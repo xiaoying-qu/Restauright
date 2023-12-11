@@ -65,13 +65,15 @@ fun ResultsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
+                    /*Icon(
                         painter = rememberAsyncImagePainter(R.drawable.logo),
                         contentDescription = "Logo Image",
                         tint = Color.Unspecified,
                         modifier = Modifier.padding(end = 8.dp)
                             .size(45.dp)
                     )
+
+                     */
                     Text(
                         text = "Results",
                         modifier = Modifier.padding(16.dp)
