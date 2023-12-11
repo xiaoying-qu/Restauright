@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import hu.ait.restauright.R
 import hu.ait.restauright.location.LocationManager
 
 
@@ -89,11 +91,11 @@ fun HomeScreen(
                     }
                 }
             }) {
-                Text(text = "Join a group with a code")
+                Text(text = stringResource(R.string.join_a_group_with_a_code))
             }
             Spacer(modifier = modifier.height(50.dp))
             Text(
-                text = "OR",
+                text = stringResource(R.string.or),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
@@ -101,7 +103,7 @@ fun HomeScreen(
             Button(onClick = {
                 showCreateSessionForm = true
             }) {
-                Text(text = "Create a new group")
+                Text(text = stringResource(R.string.create_a_new_group))
             }
 
             Spacer(modifier = modifier.height(30.dp))
@@ -115,9 +117,10 @@ fun HomeScreen(
                 when (homeScreenViewModel.homeUiState) {
                     is HomeUiState.Loading -> CircularProgressIndicator()
                     is HomeUiState.Error -> Text(
-                        text = "Error: ${
-                            (homeScreenViewModel.homeUiState as HomeUiState.Error).error
-                        }"
+                        text = stringResource(
+                            R.string.home_error,
+                            (homeScreenViewModel.homeUiState as HomeUiState.Error).error!!
+                        )
                     )
 
                     HomeUiState.Init -> {}
@@ -157,9 +160,10 @@ fun CreateNewSessionForm(
         ) {
             Icon(imageVector = Icons.Default.LocationOn,
                 contentDescription = "Location Icon",
-                Modifier.clickable {
-                    showLocationRequest = true
-                }
+                Modifier
+                    .clickable {
+                        showLocationRequest = true
+                    }
                     .size(50.dp))
             if (showLocationRequest){
                 getUserLocation()
@@ -181,19 +185,18 @@ fun CreateNewSessionForm(
                         zipCode = it
                     }
                 },
-                label = { Text(text = "Zip Code") }
+                label = { Text(text = stringResource(R.string.zip_code)) }
             )
 
             Button(onClick = {
                 homeScreenViewModel.createSession(zipCode) {result ->
-                    var sessionCode: String
                     if (result != null) {
                         onNavigateToRestaurants(zipCode, result.code, result.id)
                     }
                 }
 
             }) {
-                Text(text = "Create Session")
+                Text(text = stringResource(R.string.create_session))
             }
         }
     }
@@ -213,22 +216,25 @@ fun getUserLocation(
         Column {
             locationViewModel.startLocationMonitoring()
             Text(
-                text = "Location: ${getLocationText(locationViewModel.locationState.value)}"
+                text = stringResource(
+                    R.string.location,
+                    getLocationText(locationViewModel.locationState.value)
+                )
             )
         }
 
     } else {
         Column() {
             val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-                "Please consider giving permission"
+                stringResource(R.string.please_consider_giving_permission)
             } else {
-                "Give permission for location"
+                stringResource(R.string.give_permission_for_location)
             }
             Text(text = permissionText)
             Button(onClick = {
                 fineLocationPermissionState.launchPermissionRequest()
             }) {
-                Text(text = "Request permission")
+                Text(text = stringResource(R.string.request_permission))
             }
         }
     }
