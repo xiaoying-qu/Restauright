@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 fun RestaurightNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "home_screen"
+    startDestination: String = "sign_in"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
@@ -60,25 +60,27 @@ fun RestaurightNavHost(
 
         composable("home_screen") {
            HomeScreen(
-               onNavigateToRestaurants = {location, sessionCode ->
-                   navController.navigate("display_restaurants/$location/$sessionCode")
+               onNavigateToRestaurants = {location, sessionCode, sessionId ->
+                   navController.navigate("display_restaurants/$location/$sessionCode/$sessionId")
                }
            )
         }
 
-        composable("display_restaurants/{location}/{sessionCode}",
+        composable("display_restaurants/{zipCode}/{sessionCode}/{sessionId}",
             arguments = listOf(
-                navArgument("location"){type = NavType.StringType},
+                navArgument("zipCode"){type = NavType.StringType},
             )) {
-            val location = it.arguments?.getString("location")
+            val zipCode = it.arguments?.getString("zipCode")
             val sessionCode = it.arguments?.getString("sessionCode")
-            if (location != null && sessionCode != null) {
+            val sessionId = it.arguments?.getString("sessionId")
+            if (zipCode != null && sessionCode != null && sessionId != null) {
                 DisplayRestaurantsScreen(
                     onNavigateToResults = {sessionId ->
                         navController.navigate("results/$sessionId")
                     },
-                    location = location,
-                    sessionCode = sessionCode
+                    sessionCode = sessionCode,
+                    sessionZipCode = zipCode,
+                    sessionId = sessionId
                 )
             }
         }
