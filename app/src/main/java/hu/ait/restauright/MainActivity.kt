@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 fun RestaurightNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "sign_in",
+    startDestination: String = "home_screen"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
@@ -60,8 +60,8 @@ fun RestaurightNavHost(
 
         composable("home_screen") {
            HomeScreen(
-               onNavigateToRestaurants = {location, sessionCode, sessionId ->
-                   navController.navigate("display_restaurants/$location/$sessionCode/$sessionId")
+               onNavigateToRestaurants = {location, sessionCode ->
+                   navController.navigate("display_restaurants/$location/$sessionCode")
                }
            )
         }
@@ -75,7 +75,7 @@ fun RestaurightNavHost(
             val location = it.arguments?.getString("location")
             val sessionCode = it.arguments?.getString("sessionCode")
             val sessionId = it.arguments?.getString("sessionId")
-            if (location != null && sessionCode != null && sessionId != null) {
+            if (location != null && sessionCode != null && sessionId != null) 
                 DisplayRestaurantsScreen(
                     onNavigateToResults = {sessionId ->
                         navController.navigate("results/$sessionId")
