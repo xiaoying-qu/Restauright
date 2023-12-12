@@ -66,19 +66,23 @@ fun RestaurightNavHost(
            )
         }
 
-        composable("display_restaurants/{location}/{sessionCode}",
+        composable("display_restaurants/{location}/{sessionCode}/{sessionId}",
             arguments = listOf(
                 navArgument("location"){type = NavType.StringType},
+                navArgument("sessionCode"){type = NavType.StringType},
+                navArgument("sessionId"){type = NavType.StringType},
             )) {
             val location = it.arguments?.getString("location")
             val sessionCode = it.arguments?.getString("sessionCode")
-            if (location != null && sessionCode != null) {
+            val sessionId = it.arguments?.getString("sessionId")
+            if (location != null && sessionCode != null && sessionId != null) 
                 DisplayRestaurantsScreen(
                     onNavigateToResults = {sessionId ->
                         navController.navigate("results/$sessionId")
                     },
-                    location = location,
-                    sessionCode = sessionCode
+                    sessionZipCode = location,
+                    sessionCode = sessionCode,
+                    sessionId = sessionId
                 )
             }
         }

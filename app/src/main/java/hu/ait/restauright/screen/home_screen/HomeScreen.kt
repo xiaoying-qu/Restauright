@@ -211,7 +211,12 @@ fun getUserLocation(
         )
         if (fineLocationPermissionState.status.isGranted) {
         Column {
-            locationViewModel.startLocationMonitoring()
+
+            Button(onClick = {
+                locationViewModel.startLocationMonitoring()
+            }) {
+                Text(text = "Start location monitoring")
+            }
             Text(
                 text = "Location: ${getLocationText(locationViewModel.locationState.value)}"
             )

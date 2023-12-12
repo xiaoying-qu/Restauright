@@ -23,8 +23,11 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.Data.restaurant_result.Businesse
+import hu.ait.restauright.screen.RestaurantsViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -75,7 +78,13 @@ fun CardStack(
                 .draggableStack(
                     controller = cardStackController,
                     thresholdConfig = thresholdConfig,
-                    velocityThreshold = velocityThreshold
+                    velocityThreshold = velocityThreshold,
+                    onRightSwipe = {
+                        restaurantsViewModel.voteForRestaurant(
+                            items[items.size - options - 1],
+                            sessionId
+                        )
+                    }
                 )
                 .fillMaxHeight()
         ) {
@@ -93,7 +102,8 @@ fun CardStack(
                             scaleY = if (index < options) cardStackController.scale.value else 1f
                         ),
                     item,
-                    cardStackController
+                    cardStackController,
+                    sessionId = sessionId
                 )
             }
         }
@@ -104,7 +114,9 @@ fun CardStack(
 fun Card(
     modifier: Modifier = Modifier,
     item: Businesse,
-    cardStackController: CardStackController
+    cardStackController: CardStackController,
+    restaurantsViewModel: RestaurantsViewModel = hiltViewModel(),
+    sessionId: String
 ) {
     Box(modifier = modifier) {
         if (item.imageUrl != null) {
@@ -129,6 +141,7 @@ fun Card(
 
                 )
                 .padding(start = 8.dp, end = 8.dp, bottom = 24.dp, top = 8.dp)
+
         ) {
             Text(
                 text = item.alias!!,
@@ -183,6 +196,8 @@ fun Card(
                         contentDescription = "",
                         tint = Color.White,
                         modifier = modifier
+                            .height(50.dp)
+                            .width(50.dp)
                     )
                 }
             }
