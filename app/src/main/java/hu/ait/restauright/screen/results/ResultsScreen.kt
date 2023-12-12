@@ -62,12 +62,6 @@ fun ResultsScreen(
                         modifier = Modifier.padding(end = 8.dp)
                             .size(45.dp)
                     )
-
-//                    Text(
-//                        text = "Results",
-//                        modifier = Modifier.padding(16.dp)
-//                            .size(45.dp)
-//                    )
                 }
             }
         )

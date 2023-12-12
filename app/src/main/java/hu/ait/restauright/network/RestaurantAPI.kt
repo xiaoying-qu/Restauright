@@ -12,10 +12,11 @@ interface RestaurantAPI {
                                     @Header("Authorization") apiKey: String,
                                ) : RestaurantResult
 
+    @GET("/v3/businesses/search")
     suspend fun getRestaurantsbyCoord(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("term") term: String,
         @Header("Authorization") apiKey: String,
-    )
+    ) : RestaurantResult
 }

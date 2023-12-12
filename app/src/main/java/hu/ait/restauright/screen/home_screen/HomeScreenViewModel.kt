@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.restauright.Data.Session
+import hu.ait.restauright.Data.restaurant_result.RestaurantResult
 import hu.ait.restauright.network.RestaurantAPI
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -213,5 +214,5 @@ class HomeScreenViewModel @Inject constructor(
         object LoginSuccess : HomeUiState
         object RegisterSuccess : HomeUiState
         data class Error(val error: String?) : HomeUiState
-        data class Success(val restaurantResult: Unit): HomeUiState
+        data class Success(val restaurantResult: RestaurantResult): HomeUiState
     }

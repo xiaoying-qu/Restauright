@@ -20,4 +20,9 @@
     <string name="code">Code: %1$s</string>
     <string name="no_restaurants_found">No restaurants found</string>
     <string name="error_display">Error: %1$s</string>
+    <string name="request_permission_loc">Request permission</string>
+    <string name="give_permission_loc">Give permission for location</string>
+    <string name="consider_giving_permission">Please consider giving permission</string>
+    <string name="loc">Location: %1$s</string>
+    <string name="click_again_to_create_session">Click again to create session</string>
 </resources>

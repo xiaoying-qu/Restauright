@@ -25,10 +25,18 @@ fun DisplayRestaurantsScreen (
     onNavigateToResults: (String) -> Unit,
     sessionCode: String,
     sessionId: String,
-    sessionZipCode: String
+    sessionZipCode: String = "",
+    sessionLat: String = "",
+    sessionLon: String = ""
 ) {
     LaunchedEffect(key1 = Unit) {
-        restaurantsViewModel.getRestaurants(sessionZipCode)
+        if (sessionZipCode.isNullOrEmpty()) {
+            restaurantsViewModel.getRestaurantsByLocation(sessionLat, sessionLon)
+        }
+        else {
+            restaurantsViewModel.getRestaurantsByZip(sessionZipCode)
+        }
+
     }
 
     Column {

@@ -46,20 +46,31 @@ class RestaurantsViewModel @Inject constructor(
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance().getReference("sessions")
     }
-    fun getRestaurants(location: String) {
+    fun getRestaurantsByZip(zipCode: String) {
         restaurantUiState = RestaurantUiState.Loading
         viewModelScope.launch {
             restaurantUiState = try {
-<<<<<<< Updated upstream
-                val result = restaurantAPI.getRestaurants(location, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
-=======
-                val result = restaurantAPI.getRestaurantsbyZip(location, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
+                val result = restaurantAPI.getRestaurantsbyZip(zipCode, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
                 Log.d("DEBUG", "getWeather result: $result")
->>>>>>> Stashed changes
                 RestaurantUiState.Success(result)
             }
             catch (e: Exception) {
                 Log.d("ERROR", "getWeather: $e")
+                RestaurantUiState.Error(e.message!!)
+            }
+        }
+    }
+
+    fun getRestaurantsByLocation(lat: String, lon:String) {
+        val lat = lat.toDouble()
+        val lon = lon.toDouble()
+        restaurantUiState = RestaurantUiState.Loading
+        viewModelScope.launch {
+            restaurantUiState = try {
+                val result = restaurantAPI.getRestaurantsbyCoord(lat, lon, BuildConfig.RESTAURANT_TERM, BuildConfig.RESTAURANT_API_KEY)
+                RestaurantUiState.Success(result)
+            }
+            catch (e: Exception) {
                 RestaurantUiState.Error(e.message!!)
             }
         }

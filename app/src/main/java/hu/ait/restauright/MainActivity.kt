@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import hu.ait.restauright.Data.restaurant_result.Coordinates
 import hu.ait.restauright.screen.DisplayRestaurantsScreen
 import hu.ait.restauright.screen.home_screen.HomeScreen
 import hu.ait.restauright.screen.results.ResultsScreen
@@ -70,16 +69,6 @@ fun RestaurightNavHost(
                 })
         }
 
-<<<<<<< Updated upstream
-        composable("display_restaurants/{zipCode}/{sessionCode}/{sessionId}",
-            arguments = listOf(
-                navArgument("zipCode"){type = NavType.StringType},
-            )) {
-            val zipCode = it.arguments?.getString("zipCode")
-            val sessionCode = it.arguments?.getString("sessionCode")
-            val sessionId = it.arguments?.getString("sessionId")
-            if (zipCode != null && sessionCode != null && sessionId != null) {
-=======
         composable(
             "display_restaurants/{lat}/{lon}/{sessionCode}/{sessionId}",
             arguments = listOf(
@@ -94,22 +83,17 @@ fun RestaurightNavHost(
             val sessionCode = it.arguments?.getString("sessionCode")
             val sessionId = it.arguments?.getString("sessionId")
             if (lat != null && lon != null && sessionCode != null && sessionId != null) {
->>>>>>> Stashed changes
                 DisplayRestaurantsScreen(
                     onNavigateToResults = { sessionId ->
                         navController.navigate("results/$sessionId")
                     },
-<<<<<<< Updated upstream
-=======
-                    sessionZipCode = "",
->>>>>>> Stashed changes
                     sessionCode = sessionCode,
-                    sessionZipCode = zipCode,
+                    sessionLat = lat,
+                    sessionLon = lon,
                     sessionId = sessionId
                 )
             }
         }
-
 
         composable("display_restaurants/{zipCode}/{sessionCode}/{sessionId}",
             arguments = listOf(
@@ -124,8 +108,8 @@ fun RestaurightNavHost(
                         navController.navigate("results/$sessionId")
                     },
                     sessionCode = sessionCode,
+                    sessionId = sessionId,
                     sessionZipCode = zipCode,
-                    sessionId = sessionId
                 )
             }
         }

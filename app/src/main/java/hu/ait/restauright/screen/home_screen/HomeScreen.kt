@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
@@ -32,10 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-<<<<<<< Updated upstream
-import androidx.compose.ui.platform.LocalContext
-=======
->>>>>>> Stashed changes
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,10 +48,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import hu.ait.restauright.R
-<<<<<<< Updated upstream
-import hu.ait.restauright.location.LocationManager
-=======
->>>>>>> Stashed changes
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +90,13 @@ fun HomeScreen(
                 coroutineScope.launch {
                     homeScreenViewModel.joinSession(userText) { result ->
                         if (result != null) {
-                            onNavigateToRestaurants(result.zipCode, result.code, result.id)
+                            if (result.zipCode == "null") {
+                                onNavigateToRestaurantsByCoord(result.lat, result.lon, result.code, result.id)
+                            }
+                            else {
+                                onNavigateToRestaurants(result.zipCode, result.code, result.id)
+
+                            }
                         }
                     }
                 }
@@ -152,8 +151,6 @@ fun CreateNewSessionForm(
     onNavigateToRestaurants: (String, String, String) -> Unit,
     onNavigateToRestaurantsByCoord: (Double, Double, String, String) -> Unit
 ) {
-    val term by remember { mutableStateOf("restaurants") }
-    val apiKey by remember { mutableStateOf("Bearer _eBuoMXy7MP5qm9hpXb3MoxIQEOWRiytp4m3HO4vROx7pUUKwoYT5DRvD78iynlXyyxgFmKC_5eyDUwH55yDA41a7PLxS-mCKlpx58vGtOaFFEmkVJ_jFshG1k5rZXYx") }
     Dialog(onDismissRequest = onDialogDismiss) {
         var showLocationRequest by rememberSaveable {
             mutableStateOf(false)
@@ -166,6 +163,10 @@ fun CreateNewSessionForm(
         }
         var lat by rememberSaveable {
             mutableDoubleStateOf(0.0)
+        }
+
+        var buttonText by rememberSaveable {
+            mutableStateOf("Click to see real-time location")
         }
 
         Column(
@@ -185,29 +186,8 @@ fun CreateNewSessionForm(
                 Modifier
                     .clickable {
                         showLocationRequest = true
-<<<<<<< Updated upstream
                     }
                     .size(50.dp))
-            if (showLocationRequest){
-                getUserLocation()
-=======
-                        /*if (locationViewModel.locationState.value != null) {
-
-                            lat = locationViewModel.locationState.value?.latitude!!
-                            lon = locationViewModel.locationState.value?.longitude!!
-                            //homeScreenViewModel.getRestaurantsbyCoord(lat, lon, term, apiKey)
-                            homeScreenViewModel.createSessionByCoord(lat, lon) { result ->
-                                var sessionCode: String
-                                if (result != null) {
-                                    onNavigateToRestaurantsByCoord(lat, lon, result.code, result.id)
-                                }
-                            }
-                        } else {
-                            // Handle the case when location is null
-                        }
-
-                         */
-                    })
 
             if (showLocationRequest) {
                 Column {
@@ -220,23 +200,24 @@ fun CreateNewSessionForm(
 
                             Button(onClick = {
                                 getLocationText(locationViewModel.locationState.value)
+                                buttonText = "Click again to create session"
                                 if (locationViewModel.locationState.value != null){
-                                    Log.d("ok","WTFWWWWWWWWW")
-                                lat = locationViewModel.locationState.value?.latitude!!
-                                lon = locationViewModel.locationState.value?.longitude!!
-                                //homeScreenViewModel.getRestaurantsbyCoord(lat, lon, term, apiKey)
-                                homeScreenViewModel.createSessionByCoord(lat, lon) { result ->
-                                    var sessionCode: String
+                                    lat = locationViewModel.locationState.value?.latitude!!
+                                    lon = locationViewModel.locationState.value?.longitude!!
+                                    homeScreenViewModel.createSessionByCoord(lat, lon) { result ->
                                     if (result != null) {
                                         onNavigateToRestaurantsByCoord(lat, lon, result.code, result.id)
                                     }
                                 }
                             }}){
-                                Text(text = "Click to see real-time location")
+                                Text(text = "$buttonText")
                             }
                             locationViewModel.startLocationMonitoring()
                             Text(
-                                text = "Location: ${getLocationText(locationViewModel.locationState.value)}"
+                                text = stringResource(
+                                    R.string.loc,
+                                    getLocationText(locationViewModel.locationState.value)
+                                )
                             )
 
                         }
@@ -245,20 +226,19 @@ fun CreateNewSessionForm(
                         Column() {
                             val permissionText =
                                 if (fineLocationPermissionState.status.shouldShowRationale) {
-                                    "Please consider giving permission"
+                                    stringResource(R.string.consider_giving_permission)
                                 } else {
-                                    "Give permission for location"
+                                    stringResource(R.string.give_permission_loc)
                                 }
                             Text(text = permissionText)
                             Button(onClick = {
                                 fineLocationPermissionState.launchPermissionRequest()
                             }) {
-                                Text(text = "Request permission")
+                                Text(text = stringResource(R.string.request_permission_loc))
                             }
                         }
                     }
                 }
->>>>>>> Stashed changes
             }
 
             Spacer(modifier = Modifier.height(50.dp))
@@ -282,12 +262,7 @@ fun CreateNewSessionForm(
             )
 
             Button(onClick = {
-<<<<<<< Updated upstream
-                homeScreenViewModel.createSession(zipCode) {result ->
-=======
                 homeScreenViewModel.createSession(zipCode) { result ->
-                    var sessionCode: String
->>>>>>> Stashed changes
                     if (result != null) {
                         onNavigateToRestaurants(zipCode, result.code, result.id)
                     }
@@ -299,7 +274,6 @@ fun CreateNewSessionForm(
         }
     }
 }
-<<<<<<< Updated upstream
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -340,8 +314,6 @@ fun getUserLocation(
     }
 }
 
-=======
->>>>>>> Stashed changes
 fun getLocationText(location: Location?): String {
     return """
        Lat: ${location?.latitude}
